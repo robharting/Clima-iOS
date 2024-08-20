@@ -8,16 +8,19 @@
 
 import Foundation
 
-struct WeatherData: Decodable {
+// Decodable is for JSON to Object. From Object -> JSON use Encodable protocol
+// to combine use typealias to combine two protocols
+struct WeatherData: Codable {
     let name: String
     let main: Main   
     let weather: [Weather]
 }
 
-struct Main: Decodable {
+struct Main: Codable {
     let temp: Double
 }
 
-struct Weather: Decodable {
+struct Weather: Codable {
+    let id: Int
     let description: String
 }

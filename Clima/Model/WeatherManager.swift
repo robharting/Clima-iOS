@@ -8,8 +8,15 @@
 
 import Foundation
 
+// by convention define the protocol - delegate in the same file as the class that is going to use it
+protocol WeatherManagerDelegate {
+    func didUpdateWeather(weather: WeatherModel)
+}
+
 struct WeatherManager {
     let weatherURL = "https://api.openweathermap.org/data/2.5/weather?appid=51ff17cfaf34423b5c9832e3b6c54cdb&units=metric"
+    
+    var delegate: WeatherManagerDelegate?
     
     func fetchWeather(cityName: String) {
         let urlString = "\(weatherURL)&q=\(cityName)"
@@ -18,8 +25,8 @@ struct WeatherManager {
     
     func perFormRequest(urlString: String) {
         //1. Create a URL
-        
         if let url = URL(string: urlString) {
+            
             //2. Create a URLSession
             let session = URLSession(configuration: .default)
             
@@ -31,7 +38,10 @@ struct WeatherManager {
                 }
                 
                 if let safeData = data {
-                    self.parseJSON(weatherData: safeData)
+                    if let weather = self.parseJSON(weatherData: safeData) {
+                        // via Delegate Design Pattern with WeatherViewController as delegate
+                        self.delegate?.didUpdateWeather(weather: weather)
+                    }
                 }
             }
             
@@ -40,17 +50,24 @@ struct WeatherManager {
         }
     }
     
-    func parseJSON(weatherData: Data) {
+    func parseJSON(weatherData: Data) -> WeatherModel?{
         let decoder = JSONDecoder()
         do {
             let decodedData = try decoder.decode(WeatherData.self, from: weatherData)
-            print(decodedData.name)
-            print(decodedData.main.temp)
-            print(decodedData.weather[0].description)
+            let id = decodedData.weather[0].id
+            let temp = decodedData.main.temp
+            let name = decodedData.name
+            
+            let weather = WeatherModel(conditionId: id, cityName: name, temperature: temp)
+            return weather
+            
         } catch {
             print(error)
+            return nil
         }
     }
+    
+    
     
     
 }
