@@ -57,9 +57,13 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
     }
 
     // implementation from delegate WeatherManagerDelegate
-    func didUpdateWeather(weather: WeatherModel) {
+    func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
         print(weather.temperature)
     }
 
+    // implementation off didFailWithError delegate
+    func didFailWithError(error: Error){
+        print(error)
+    }
 }
 
