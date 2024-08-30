@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 // by convention define the protocol - delegate in the same file as the class that is going to use it
 protocol WeatherManagerDelegate {
